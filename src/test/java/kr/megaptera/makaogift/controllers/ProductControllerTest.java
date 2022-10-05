@@ -6,6 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -16,6 +20,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.spy;
 
 @WebMvcTest(ProductController.class)
 @ActiveProfiles("test")
@@ -50,11 +55,18 @@ class ProductControllerTest {
     List<Product> products = List.of(
         new Product(1L, "제조사명 1", "Very Good Product", 100L, "상품 설명 1"),
         new Product(2L, "제조사명 2", "Gorgeous Product", 100L, "상품 설명 2"),
-        new Product(2L, "제조사명 3", "Extraordinary Product", 100L, "상품 설명 3")
+        new Product(3L, "제조사명 3", "Extraordinary Product", 100L, "상품 설명 3")
     );
-    given(productService.findAll()).willReturn(products);
+    int page = 1;
+    Pageable pageable = PageRequest.of(page - 1, 2);
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/products"))
+    Page<Product> pageableProducts = new PageImpl<>(products, pageable, products.size());
+
+    given(productService.findByPage(any(Integer.class)))
+        .willReturn(pageableProducts);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/products")
+            .param("page", "1"))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().string(
             containsString("Very Good Product")

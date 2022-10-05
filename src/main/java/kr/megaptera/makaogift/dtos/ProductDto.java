@@ -1,15 +1,15 @@
 package kr.megaptera.makaogift.dtos;
 
 public class ProductDto {
-  private Long id;
+  private final Long id;
 
-  private String maker;
+  private final String maker;
 
-  private String name;
+  private final String name;
 
-  private Long price;
+  private final Long price;
 
-  private String description;
+  private final String description;
 
   public ProductDto(Long id, String maker, String name, Long price, String description) {
     this.id = id;

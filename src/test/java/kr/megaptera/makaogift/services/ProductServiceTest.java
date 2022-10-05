@@ -4,6 +4,10 @@ import kr.megaptera.makaogift.models.Product;
 import kr.megaptera.makaogift.repositories.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,30 +47,44 @@ class ProductServiceTest {
   }
 
   @Test
-  void findAll() {
+  void findByPage() {
     List<Product> products = List.of(
         new Product(1L, "제조사명 1", "Bad Product", 100L, "상품 설명 1"),
         new Product(2L, "제조사명 2", "Disappointing Product", 200L, "상품 설명 2"),
-        new Product(2L, "제조사명 3", "Disgusting Product", 300L, "상품 설명 3")
+        new Product(3L, "제조사명 3", "Disgusting Product", 300L, "상품 설명 3"),
+        new Product(4L, "제조사명 4", "Bad Product", 400L, "상품 설명 4"),
+        new Product(5L, "제조사명 5", "Disappointing Product", 500L, "상품 설명 5"),
+        new Product(6L, "제조사명 6", "Disgusting Product", 600L, "상품 설명 6")
     );
-    given(productRepository.findAll())
-        .willReturn(products);
+    int page = 2;
+    Pageable pageable = PageRequest.of(page - 1, 3);
 
-    List<Product> founds = productService.findAll();
+    Page<Product> pageableProducts = new PageImpl<>(products, pageable, products.size());
 
-    assertThat(founds).isNotEmpty();
-    verify(productRepository).findAll();
+    given(productRepository.findAll(any(Pageable.class)))
+        .willReturn(pageableProducts);
+
+    Page<Product> pageableFounds = productService.findByPage(page);
+
+    assertThat(pageableFounds).isNotEmpty();
+
+    verify(productRepository).findAll(any(Pageable.class));
   }
 
   @Test
   void findAllWhenEmpty() {
     List<Product> products = List.of();
-    given(productRepository.findAll())
-        .willReturn(products);
+    int page = 1;
+    Pageable pageable = PageRequest.of(page - 1, 3);
 
-    List<Product> founds = productService.findAll();
+    Page<Product> pageableProducts = new PageImpl<>(products, pageable, products.size());
+
+    given(productRepository.findAll(any(Pageable.class)))
+        .willReturn(pageableProducts);
+
+    Page<Product> founds = productService.findByPage(page);
 
     assertThat(founds).isEmpty();
-    verify(productRepository).findAll();
+    verify(productRepository).findAll(any(Pageable.class));
   }
 }

@@ -32,6 +32,10 @@ public class Product {
     this.description = description;
   }
 
+  public String maker() {
+    return maker;
+  }
+
   public ProductDto toDto() {
     return new ProductDto(
         id,
