@@ -36,6 +36,10 @@ public class Product {
     return maker;
   }
 
+  public String name() {
+    return name;
+  }
+
   public ProductDto toDto() {
     return new ProductDto(
         id,
