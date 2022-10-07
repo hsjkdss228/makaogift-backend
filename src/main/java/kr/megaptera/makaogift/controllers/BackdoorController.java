@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/backdoor")
 @Transactional
@@ -19,7 +21,7 @@ public class BackdoorController {
 
   @GetMapping("/reset-products")
   public String resetProducts() {
-    resetDatabase();
+    resetProductsDatabase();
 
     return "Backdoor 상품 목록 비우기가 완료되었습니다.";
   }
@@ -32,7 +34,7 @@ public class BackdoorController {
       @RequestParam Long price,
       @RequestParam String description
   ) {
-    resetDatabase();
+    resetProductsDatabase();
 
     jdbcTemplate.update("" +
                         "insert into PRODUCT(" +
@@ -47,7 +49,7 @@ public class BackdoorController {
   public String setupProducts(
       @RequestParam Long count
   ) {
-    resetDatabase();
+    resetProductsDatabase();
 
     for (long i = 1; i <= count; i += 1) {
       jdbcTemplate.update("" +
@@ -60,7 +62,34 @@ public class BackdoorController {
     return "Backdoor 상품 여러 개 세팅이 완료되었습니다.";
   }
 
-  public void resetDatabase() {
+  @GetMapping("/setup-transactions")
+  public String setupTransactions(
+      @RequestParam Long count
+  ) {
+    // TODO: 계정 개념이 도입될 경우 보내는 사람 Column을 추가해줘야 함
+
+    resetTransactionsDatabase();
+
+    for (long i = 1; i <= count; i += 1) {
+      jdbcTemplate.update("" +
+                          "insert into TRANSACTION(" +
+                          "ID, MAKER, NAME, PURCHASE_COUNT, PURCHASE_COST, " +
+                          "RECIPIENT, ADDRESS, MESSAGE_TO_SEND, " +
+                          "CREATED_AT) " +
+                          "values(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          i, "제조사 " + i, "상품 옵션명 " + i, i, i * (i * 100),
+          "받는 사람 " + i, "주소 " + i, "보낼 메세지 " + i,
+          LocalDateTime.now());
+    }
+
+    return "Backdoor 거래 내역 여러 개 세팅이 완료되었습니다.";
+  }
+
+  public void resetProductsDatabase() {
     jdbcTemplate.execute("delete from PRODUCT");
+  }
+
+  public void resetTransactionsDatabase() {
+    jdbcTemplate.execute("delete from TRANSACTION");
   }
 }

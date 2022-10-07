@@ -39,4 +39,11 @@ public class BackdoorControllerTest {
             "?count=40"))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }
+
+  @Test
+  void setupTransactions() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get("/backdoor/setup-transactions" +
+            "?count=40"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
 }

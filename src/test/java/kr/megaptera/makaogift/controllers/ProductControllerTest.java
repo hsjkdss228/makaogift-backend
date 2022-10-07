@@ -20,7 +20,6 @@ import java.util.List;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.spy;
 
 @WebMvcTest(ProductController.class)
 @ActiveProfiles("test")
@@ -60,8 +59,8 @@ class ProductControllerTest {
     int page = 1;
     Pageable pageable = PageRequest.of(page - 1, 2);
 
-    Page<Product> pageableProducts = new PageImpl<>(products, pageable, products.size());
-
+    Page<Product> pageableProducts
+        = new PageImpl<>(products, pageable, products.size());
     given(productService.findByPage(any(Integer.class)))
         .willReturn(pageableProducts);
 

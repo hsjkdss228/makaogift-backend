@@ -1,12 +1,14 @@
 package kr.megaptera.makaogift.models;
 
 import kr.megaptera.makaogift.dtos.OrderResultDto;
+import kr.megaptera.makaogift.dtos.TransactionDto;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 public class Transaction {
@@ -60,8 +62,49 @@ public class Transaction {
     this.messageToSend = messageToSend;
   }
 
-  public OrderResultDto toResultDto() {
+  public Transaction(String maker, String name,
+                     Integer purchaseCount, Long purchaseCost,
+                     String recipient, String address, String messageToSend,
+                     LocalDateTime createdAt) {
+    this.maker = maker;
+    this.name = name;
+    this.purchaseCount = purchaseCount;
+    this.purchaseCost = purchaseCost;
+    this.recipient = recipient;
+    this.address = address;
+    this.messageToSend = messageToSend;
+    this.createdAt = createdAt;
+  }
+
+  public Transaction(Long id, String maker, String name,
+                     Integer purchaseCount, Long purchaseCost,
+                     String recipient, String address, String messageToSend,
+                     LocalDateTime createdAt) {
+    this.id = id;
+    this.maker = maker;
+    this.name = name;
+    this.purchaseCount = purchaseCount;
+    this.purchaseCost = purchaseCost;
+    this.recipient = recipient;
+    this.address = address;
+    this.messageToSend = messageToSend;
+    this.createdAt = createdAt;
+  }
+
+  public LocalDateTime createdAt() {
+    return createdAt;
+  }
+
+  public OrderResultDto toOrderResultDto() {
     return new OrderResultDto(id);
+  }
+
+  public TransactionDto toTransactionDto() {
+    return new TransactionDto(
+        id, maker, name, purchaseCount, purchaseCost,
+        recipient, address, messageToSend,
+        createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    );
   }
 
   @Override
@@ -81,6 +124,7 @@ public class Transaction {
         && this.purchaseCost.equals(((Transaction) other).purchaseCost)
         && this.recipient.equals(((Transaction) other).recipient)
         && this.address.equals(((Transaction) other).address)
-        && this.messageToSend.equals(((Transaction) other).messageToSend);
+        && this.messageToSend.equals(((Transaction) other).messageToSend)
+        && this.createdAt.equals(((Transaction) other).createdAt);
   }
 }

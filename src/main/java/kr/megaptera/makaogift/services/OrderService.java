@@ -5,6 +5,9 @@ import kr.megaptera.makaogift.models.Transaction;
 import kr.megaptera.makaogift.models.Product;
 import kr.megaptera.makaogift.repositories.OrderRepository;
 import kr.megaptera.makaogift.repositories.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,11 @@ public class OrderService {
     this.orderRepository = orderRepository;
   }
 
+  public Page<Transaction> findByPage(int page, int pageSize) {
+    Pageable pageable = PageRequest.of(page - 1, pageSize);
+    return orderRepository.findAll(pageable);
+  }
+
   public Transaction createOrder(Long productId, Integer purchaseCount, Long purchaseCost,
                                  String recipient, String address, String messageToSend) {
     Product found = productRepository.findById(productId)
@@ -28,7 +36,8 @@ public class OrderService {
     String maker = found.maker();
     String name = found.name();
 
-    Transaction transaction = new Transaction(maker, name, purchaseCount, purchaseCost,
+    Transaction transaction = new Transaction(
+        maker, name, purchaseCount, purchaseCost,
         recipient, address, messageToSend);
 
     return orderRepository.save(transaction);

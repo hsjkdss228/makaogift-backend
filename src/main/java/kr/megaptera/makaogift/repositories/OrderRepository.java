@@ -4,5 +4,5 @@ import kr.megaptera.makaogift.models.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderRepository extends JpaRepository<Transaction, Long> {
-
+  Transaction save(Transaction transaction);
 }

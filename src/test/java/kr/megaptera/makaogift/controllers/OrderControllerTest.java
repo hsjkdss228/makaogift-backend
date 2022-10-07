@@ -7,11 +7,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,6 +32,48 @@ class OrderControllerTest {
 
   @MockBean
   private OrderService orderService;
+
+  @Test
+  void orders() throws Exception {
+    List<Transaction> transactions = List.of(
+        new Transaction(1L, "Emart 24", "랜더스 수제맥주", 5, 15000L,
+            "박수민", "인천 동구", "형님 잘 계십니까?",
+            LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0)),
+        new Transaction(2L, "Insight", "TDD", 1, 22000L,
+            "김인우", "충청남도", "인우야 책읽자",
+            LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0)),
+        new Transaction(3L, "Starbucks", "돌체 연유라떼", 4, 24000L,
+            "김커피", "커피나라", "커피애호가에게 보내는 최고의 선물",
+            LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0)),
+        new Transaction(4L, "Samsung Electronics", "주식", 10, 700000L,
+            "불쌍한사람", "10층", "좀만 견디십쇼",
+            LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0))
+    );
+    int page = 1;
+    int pageSize = 3;
+    Pageable pageable = PageRequest.of(page - 1, pageSize);
+
+    Page<Transaction> pageableTransactions
+        = new PageImpl<>(transactions, pageable, transactions.size());
+    given(orderService.findByPage(any(Integer.class), any(Integer.class)))
+        .willReturn(pageableTransactions);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/orders")
+            .param("page", "1"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().string(
+            containsString("Emart 24")
+        ))
+        .andExpect(MockMvcResultMatchers.content().string(
+            containsString("Insight")
+        ))
+        .andExpect(MockMvcResultMatchers.content().string(
+            containsString("Starbucks")
+        ))
+        .andExpect(MockMvcResultMatchers.content().string(
+            containsString("Samsung Electronics")
+        ));
+  }
 
   @Test
   void order() throws Exception {

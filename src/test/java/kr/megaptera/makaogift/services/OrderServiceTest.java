@@ -7,6 +7,7 @@ import kr.megaptera.makaogift.repositories.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,14 +42,16 @@ class OrderServiceTest {
     Product product = new Product(
         productId, maker, name, 100000L,
         "Well made shirt");
-    Transaction transaction = new Transaction(
+
+    Transaction createdTransaction = new Transaction(
         1L, maker, name, purchaseCount, purchaseCost,
-        recipient, address, messageToSend);
+        recipient, address, messageToSend,
+        LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0));
 
     given(productRepository.findById(any(Long.class))).willReturn(Optional.of(product));
-    given(orderRepository.save(any(Transaction.class))).willReturn(transaction);
+    given(orderRepository.save(any(Transaction.class))).willReturn(createdTransaction);
 
-    Transaction createdTransaction = orderService.createOrder(
+    Transaction transaction = orderService.createOrder(
         productId, purchaseCount, purchaseCost, recipient, address, messageToSend);
 
     assertThat(createdTransaction).isNotNull();
