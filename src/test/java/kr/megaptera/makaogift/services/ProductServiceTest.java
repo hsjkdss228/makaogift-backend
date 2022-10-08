@@ -57,16 +57,18 @@ class ProductServiceTest {
         new Product(6L, "제조사명 6", "Disgusting Product", 600L, "상품 설명 6")
     );
     int page = 2;
-    Pageable pageable = PageRequest.of(page - 1, 3);
+    int pageSize = 3;
+    Pageable pageable = PageRequest.of(page - 1, pageSize);
 
-    Page<Product> pageableProducts = new PageImpl<>(products, pageable, products.size());
+    Page<Product> pageableProducts
+        = new PageImpl<>(products, pageable, products.size());
 
     given(productRepository.findAll(any(Pageable.class)))
         .willReturn(pageableProducts);
 
-    Page<Product> pageableFounds = productService.findByPage(page);
+    Page<Product> founds = productService.findByPage(page, pageSize);
 
-    assertThat(pageableFounds).isNotEmpty();
+    assertThat(founds).hasSize(products.size());
 
     verify(productRepository).findAll(any(Pageable.class));
   }
@@ -75,14 +77,15 @@ class ProductServiceTest {
   void findAllWhenEmpty() {
     List<Product> products = List.of();
     int page = 1;
-    Pageable pageable = PageRequest.of(page - 1, 3);
+    int pageSize = 3;
+    Pageable pageable = PageRequest.of(page - 1, pageSize);
 
     Page<Product> pageableProducts = new PageImpl<>(products, pageable, products.size());
 
     given(productRepository.findAll(any(Pageable.class)))
         .willReturn(pageableProducts);
 
-    Page<Product> founds = productService.findByPage(page);
+    Page<Product> founds = productService.findByPage(page, pageSize);
 
     assertThat(founds).isEmpty();
     verify(productRepository).findAll(any(Pageable.class));

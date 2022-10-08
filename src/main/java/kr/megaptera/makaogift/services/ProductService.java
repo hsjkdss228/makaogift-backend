@@ -23,8 +23,8 @@ public class ProductService {
         .orElseThrow(ProductNotFound::new);
   }
 
-  public Page<Product> findByPage(int page) {
-    Pageable pageable = PageRequest.of(page - 1, 8);
+  public Page<Product> findByPage(int page, int pageSize) {
+    Pageable pageable = PageRequest.of(page - 1, pageSize);
     return productRepository.findAll(pageable);
   }
 }

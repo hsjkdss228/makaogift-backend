@@ -1,6 +1,7 @@
 package kr.megaptera.makaogift.services;
 
 import kr.megaptera.makaogift.exceptions.ProductNotFound;
+import kr.megaptera.makaogift.exceptions.TransactionNotFound;
 import kr.megaptera.makaogift.models.Transaction;
 import kr.megaptera.makaogift.models.Product;
 import kr.megaptera.makaogift.repositories.OrderRepository;
@@ -21,6 +22,11 @@ public class OrderService {
                       OrderRepository orderRepository) {
     this.productRepository = productRepository;
     this.orderRepository = orderRepository;
+  }
+
+  public Transaction orderDetail(Long transactionId) {
+    return orderRepository.findById(transactionId)
+        .orElseThrow(TransactionNotFound::new);
   }
 
   public Page<Transaction> findByPage(int page, int pageSize) {

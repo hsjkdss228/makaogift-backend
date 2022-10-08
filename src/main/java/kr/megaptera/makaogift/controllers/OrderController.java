@@ -9,6 +9,7 @@ import kr.megaptera.makaogift.services.OrderService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+// TODO: 모든 컨트롤러, 서비스에 대해 예외처리에 대한 테스트 코드와
+//  예외처리 로직을 작성해줄 수 있도록 하자.
 
 @RestController
 public class OrderController {
@@ -40,6 +44,15 @@ public class OrderController {
         .toList();
 
     return new TransactionsDto(transactionDtos, pageSize, totalTransactionsSize);
+  }
+
+  @GetMapping("orders/{id}")
+  public TransactionDto orderDetail(
+      @PathVariable("id") Long transactionId
+  ) {
+    Transaction transaction = orderService.orderDetail(transactionId);
+
+    return transaction.toTransactionDto();
   }
 
   @PostMapping("order")

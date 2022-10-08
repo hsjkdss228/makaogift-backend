@@ -34,6 +34,22 @@ class OrderControllerTest {
   private OrderService orderService;
 
   @Test
+  void orderDetail() throws Exception {
+    Transaction transaction = new Transaction(
+        1L, "Forgotten Empires", "AOE2: Definitive Edition", 3, 40000L,
+        "김종진", "순천", "게임은 역시 고전이죠",
+        LocalDateTime.of(2022, 10, 8, 10, 43, 0, 0));
+    given(orderService.orderDetail(any(Long.class)))
+        .willReturn(transaction);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/orders/1"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().string(
+            containsString("AOE2: Definitive Edition")
+        ));
+  }
+
+  @Test
   void orders() throws Exception {
     List<Transaction> transactions = List.of(
         new Transaction(1L, "Emart 24", "랜더스 수제맥주", 5, 15000L,
@@ -52,7 +68,6 @@ class OrderControllerTest {
     int page = 1;
     int pageSize = 3;
     Pageable pageable = PageRequest.of(page - 1, pageSize);
-
     Page<Transaction> pageableTransactions
         = new PageImpl<>(transactions, pageable, transactions.size());
     given(orderService.findByPage(any(Integer.class), any(Integer.class)))

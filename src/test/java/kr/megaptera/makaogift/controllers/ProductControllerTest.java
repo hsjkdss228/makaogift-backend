@@ -34,19 +34,18 @@ class ProductControllerTest {
   void product() throws Exception {
     Product product = new Product(
         1L,
-        "제조사명",
-        "Very Good Product",
-        10000L,
-        "이 상품은 이러이러합니다"
+        "Chris Sawyer",
+        "RollerCoaster Tycoon 2",
+        5000L,
+        "놀이공원 건설 경영 시뮬레이션 게임을 가장한 대혼돈의 실험실"
     );
     given(productService.product(any())).willReturn(product);
 
     mockMvc.perform(MockMvcRequestBuilders.get("/products/1"))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().string(
-            containsString("Very Good Product")
-        ))
-    ;
+            containsString("RollerCoaster Tycoon 2")
+        ));
   }
 
   @Test
@@ -61,7 +60,7 @@ class ProductControllerTest {
 
     Page<Product> pageableProducts
         = new PageImpl<>(products, pageable, products.size());
-    given(productService.findByPage(any(Integer.class)))
+    given(productService.findByPage(any(Integer.class), any(Integer.class)))
         .willReturn(pageableProducts);
 
     mockMvc.perform(MockMvcRequestBuilders.get("/products")
