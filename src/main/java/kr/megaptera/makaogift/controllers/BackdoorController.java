@@ -66,18 +66,19 @@ public class BackdoorController {
   public String setupTransactions(
       @RequestParam Long count
   ) {
-    // TODO: 계정 개념이 도입될 경우 보내는 사람 Column을 추가해줘야 함
+    // TODO: 보내는 사람 한 명이 여러 개의 주문 내역을 만드는 과정은
+    //  어떻게 구현할 것인지 고민이 필요할 듯
 
     resetTransactionsDatabase();
 
     for (long i = 1; i <= count; i += 1) {
       jdbcTemplate.update("" +
                           "insert into TRANSACTION(" +
-                          "ID, MAKER, NAME, PURCHASE_COUNT, PURCHASE_COST, " +
-                          "RECIPIENT, ADDRESS, MESSAGE_TO_SEND, " +
+                          "ID, SENDER, MAKER, NAME, PURCHASE_COUNT, PURCHASE_COST, " +
+                          "RECEIVER, ADDRESS, MESSAGE_TO_SEND, " +
                           "CREATED_AT) " +
-                          "values(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          i, "제조사 " + i, "상품 옵션명 " + i, i, i * (i * 100),
+                          "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          i, "보내는 사람" + i , "제조사 " + i, "상품 옵션명 " + i, i, i * (i * 100),
           "받는 사람 " + i, "주소 " + i, "보낼 메세지 " + i,
           LocalDateTime.now());
     }

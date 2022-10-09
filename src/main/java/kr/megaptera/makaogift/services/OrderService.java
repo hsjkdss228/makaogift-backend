@@ -1,9 +1,12 @@
 package kr.megaptera.makaogift.services;
 
+import kr.megaptera.makaogift.exceptions.AccountNotFound;
 import kr.megaptera.makaogift.exceptions.ProductNotFound;
 import kr.megaptera.makaogift.exceptions.TransactionNotFound;
+import kr.megaptera.makaogift.models.Account;
 import kr.megaptera.makaogift.models.Transaction;
 import kr.megaptera.makaogift.models.Product;
+import kr.megaptera.makaogift.repositories.AccountRepository;
 import kr.megaptera.makaogift.repositories.OrderRepository;
 import kr.megaptera.makaogift.repositories.ProductRepository;
 import org.springframework.data.domain.Page;
@@ -15,13 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class OrderService {
-  private final ProductRepository productRepository;
+  private final AccountRepository accountRepository;
   private final OrderRepository orderRepository;
+  private final ProductRepository productRepository;
 
-  public OrderService(ProductRepository productRepository,
-                      OrderRepository orderRepository) {
-    this.productRepository = productRepository;
+  public OrderService(AccountRepository accountRepository,
+                      OrderRepository orderRepository,
+                      ProductRepository productRepository) {
+    this.accountRepository = accountRepository;
     this.orderRepository = orderRepository;
+    this.productRepository = productRepository;
   }
 
   public Transaction orderDetail(Long transactionId) {
@@ -29,21 +35,32 @@ public class OrderService {
         .orElseThrow(TransactionNotFound::new);
   }
 
-  public Page<Transaction> findByPage(int page, int pageSize) {
+  public Page<Transaction> findOrdersByIdentification(String identification,
+                                                      int page, int pageSize) {
+    Account account = accountRepository.findByIdentification(identification)
+        .orElseThrow(AccountNotFound::new);
+
+    String sender = account.name();
+
     Pageable pageable = PageRequest.of(page - 1, pageSize);
-    return orderRepository.findAll(pageable);
+    return orderRepository.findAllBySender(sender, pageable);
   }
 
-  public Transaction createOrder(Long productId, Integer purchaseCount, Long purchaseCost,
+  public Transaction createOrder(String identification,
+                                 Long productId, Integer purchaseCount, Long purchaseCost,
                                  String recipient, String address, String messageToSend) {
+    Account account = accountRepository.findByIdentification(identification)
+        .orElseThrow(AccountNotFound::new);
+
     Product found = productRepository.findById(productId)
         .orElseThrow(ProductNotFound::new);
 
+    String sender = account.name();
     String maker = found.maker();
     String name = found.name();
 
     Transaction transaction = new Transaction(
-        maker, name, purchaseCount, purchaseCost,
+        sender, maker, name, purchaseCount, purchaseCost,
         recipient, address, messageToSend);
 
     return orderRepository.save(transaction);

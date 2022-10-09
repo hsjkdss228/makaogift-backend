@@ -10,9 +10,6 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-// TODO 1: 보내는 사람의 데이터가 추가되어야 하고 (sender),
-//  받는 사람의 데이터 이름을 recipient >> receiver로 수정해야 함 (쉬운 명칭으로)
-
 // TODO 2: 상품의 maker, name을 직접 가져오는 지금의 구조에 변경을 가해서
 //  상품의 Id만을 가지고 있게 하고, service에서는 transaction과 product를 묶어서 반환하게 한 뒤
 //  나중에 dto로 돌려줄 때 transactionDto에 product의 제조사, 이름을 넣는 구조로 변환해야 할까?
@@ -24,6 +21,8 @@ public class Transaction {
   @GeneratedValue
   private Long id;
 
+  private String sender;
+
   private String maker;
 
   private String name;
@@ -32,7 +31,7 @@ public class Transaction {
 
   private Long purchaseCost;
 
-  private String recipient;
+  private String receiver;
 
   private String address;
 
@@ -45,55 +44,59 @@ public class Transaction {
 
   }
 
-  public Transaction(String maker, String name,
+  public Transaction(String sender, String maker, String name,
                      Integer purchaseCount, Long purchaseCost,
-                     String recipient, String address, String messageToSend) {
+                     String receiver, String address, String messageToSend) {
+    this.sender = sender;
     this.maker = maker;
     this.name = name;
     this.purchaseCount = purchaseCount;
     this.purchaseCost = purchaseCost;
-    this.recipient = recipient;
+    this.receiver = receiver;
     this.address = address;
     this.messageToSend = messageToSend;
   }
 
-  public Transaction(Long id, String maker, String name,
+  public Transaction(Long id, String sender, String maker, String name,
                      Integer purchaseCount, Long purchaseCost,
-                     String recipient, String address, String messageToSend) {
+                     String receiver, String address, String messageToSend) {
     this.id = id;
+    this.sender = sender;
     this.maker = maker;
     this.name = name;
     this.purchaseCount = purchaseCount;
     this.purchaseCost = purchaseCost;
-    this.recipient = recipient;
+    this.receiver = receiver;
     this.address = address;
     this.messageToSend = messageToSend;
   }
 
-  public Transaction(String maker, String name,
+  public Transaction(String sender, String maker, String name,
                      Integer purchaseCount, Long purchaseCost,
-                     String recipient, String address, String messageToSend,
+                     String receiver, String address, String messageToSend,
                      LocalDateTime createdAt) {
+    this.sender = sender;
     this.maker = maker;
     this.name = name;
     this.purchaseCount = purchaseCount;
     this.purchaseCost = purchaseCost;
-    this.recipient = recipient;
+    this.receiver = receiver;
     this.address = address;
     this.messageToSend = messageToSend;
     this.createdAt = createdAt;
   }
 
-  public Transaction(Long id, String maker, String name,
+  public Transaction(Long id, String sender, String maker, String name,
                      Integer purchaseCount, Long purchaseCost,
-                     String recipient, String address, String messageToSend,
+                     String receiver, String address, String messageToSend,
                      LocalDateTime createdAt) {
     this.id = id;
+    this.sender = sender;
     this.maker = maker;
     this.name = name;
     this.purchaseCount = purchaseCount;
     this.purchaseCost = purchaseCost;
-    this.recipient = recipient;
+    this.receiver = receiver;
     this.address = address;
     this.messageToSend = messageToSend;
     this.createdAt = createdAt;
@@ -114,7 +117,7 @@ public class Transaction {
   public TransactionDto toTransactionDto() {
     return new TransactionDto(
         id, maker, name, purchaseCount, purchaseCost,
-        recipient, address, messageToSend,
+        receiver, address, messageToSend,
         createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     );
   }
@@ -123,18 +126,19 @@ public class Transaction {
   public String toString() {
     return "Order: " + id + ", " + maker + ", " + name + ", " +
         purchaseCount + ", " + purchaseCost + ", " +
-        recipient + ", " + address + ", " + messageToSend;
+        receiver + ", " + address + ", " + messageToSend;
   }
 
   @Override
   public boolean equals(Object other) {
     return other != null
         && other.getClass() == Transaction.class
+        && this.sender.equals(((Transaction) other).sender)
         && this.maker.equals(((Transaction) other).maker)
         && this.name.equals(((Transaction) other).name)
         && this.purchaseCount.equals(((Transaction) other).purchaseCount)
         && this.purchaseCost.equals(((Transaction) other).purchaseCost)
-        && this.recipient.equals(((Transaction) other).recipient)
+        && this.receiver.equals(((Transaction) other).receiver)
         && this.address.equals(((Transaction) other).address)
         && this.messageToSend.equals(((Transaction) other).messageToSend)
         && this.createdAt.equals(((Transaction) other).createdAt);

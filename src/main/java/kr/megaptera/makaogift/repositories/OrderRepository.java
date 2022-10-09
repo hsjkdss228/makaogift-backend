@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Transaction, Long> {
   Optional<Transaction> findById(Long Id);
 
-  Page<Transaction> findAll(Pageable pageable);
+  Page<Transaction> findAllBySender(String sender, Pageable pageable);
 
   Transaction save(Transaction transaction);
 }

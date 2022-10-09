@@ -25,12 +25,14 @@ public class Account {
   }
 
   public Account(String name, String identification, Long amount) {
+    this.name = name;
     this.identification = identification;
     this.amount = amount;
   }
 
   public Account(Long id, String name, String identification, Long amount) {
     this.id = id;
+    this.name = name;
     this.identification = identification;
     this.amount = amount;
   }
