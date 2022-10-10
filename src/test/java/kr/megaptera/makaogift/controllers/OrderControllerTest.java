@@ -124,7 +124,7 @@ class OrderControllerTest {
                 "\"productId\":\"1\"," +
                 "\"purchaseCount\":\"3\"," +
                 "\"purchaseCost\":\"40000\"," +
-                "\"recipient\":\"황인우\"," +
+                "\"receiver\":\"황인우\"," +
                 "\"address\":\"Chungcheongnamdo\"," +
                 "\"messageToSend\":\"good\"" +
                 "}"))
@@ -137,5 +137,85 @@ class OrderControllerTest {
         any(String.class), any(Long.class), any(Integer.class), any(Long.class),
         any(String.class), any(String.class), any(String.class)
     );
+  }
+
+  @Test
+  void orderWithBlankName() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.post("/order")
+            .header("Authorization", "Bearer " + token)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"productId\":\"1\"," +
+                "\"purchaseCount\":\"3\"," +
+                "\"purchaseCost\":\"40000\"," +
+                "\"receiver\":\"\"," +
+                "\"address\":\"Chungcheongnamdo\"," +
+                "\"messageToSend\":\"good\"" +
+                "}"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.content().string(
+            containsString("3000")
+        ));
+  }
+
+  @Test
+  void orderWithBlankAddress() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.post("/order")
+            .header("Authorization", "Bearer " + token)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"productId\":\"1\"," +
+                "\"purchaseCount\":\"3\"," +
+                "\"purchaseCost\":\"40000\"," +
+                "\"receiver\":\"황인우\"," +
+                "\"address\":\"\"," +
+                "\"messageToSend\":\"good\"" +
+                "}"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.content().string(
+            containsString("3001")
+        ));
+  }
+
+  @Test
+  void orderWithReceiverWithLessThan3Words() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.post("/order")
+            .header("Authorization", "Bearer " + token)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"productId\":\"1\"," +
+                "\"purchaseCount\":\"3\"," +
+                "\"purchaseCost\":\"40000\"," +
+                "\"receiver\":\"황인\"," +
+                "\"address\":\"chungchungnamdo\"," +
+                "\"messageToSend\":\"good\"" +
+                "}"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.content().string(
+            containsString("3002")
+        ));
+  }
+
+  @Test
+  void orderWithReceiverWithMoreThan7Words() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.post("/order")
+            .header("Authorization", "Bearer " + token)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"productId\":\"1\"," +
+                "\"purchaseCount\":\"3\"," +
+                "\"purchaseCost\":\"40000\"," +
+                "\"receiver\":\"킹왕짱치코리타타\"," +
+                "\"address\":\"chungchungnamdo\"," +
+                "\"messageToSend\":\"good\"" +
+                "}"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.content().string(
+            containsString("3002")
+        ));
   }
 }

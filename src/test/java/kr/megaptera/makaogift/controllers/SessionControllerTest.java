@@ -55,8 +55,33 @@ class SessionControllerTest {
   }
 
   @Test
+  void loginWithBlankIdentification() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.post("/session")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"identification\":\"\"," +
+                "\"password\":\"Megaptera!1\"" +
+                "}"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
+
+  @Test
+  void loginWithBlankPassword() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.post("/session")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"identification\":\"\"," +
+                "\"password\":\"\"" +
+                "}"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
+
+  @Test
   void loginWithWrongIdentification() throws Exception {
-    given(loginService.login(any(), any())).willThrow(new LoginFailed());
+    given(loginService.login(any(), any()))
+        .willThrow(new LoginFailed());
 
     mockMvc.perform(MockMvcRequestBuilders.post("/session")
             .accept(MediaType.APPLICATION_JSON)

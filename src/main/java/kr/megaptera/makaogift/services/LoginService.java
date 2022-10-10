@@ -21,7 +21,7 @@ public class LoginService {
 
   public Account login(String identification, String password) {
     Account account = accountRepository.findByIdentification(identification)
-        .orElseThrow(LoginFailed::new);
+        .orElseThrow(() -> new LoginFailed());
 
     if (!account.authenticate(password, passwordEncoder)) {
       throw new LoginFailed();

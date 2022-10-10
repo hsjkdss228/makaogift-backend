@@ -1,6 +1,6 @@
 package kr.megaptera.makaogift.controllers;
 
-import kr.megaptera.makaogift.dtos.LoginFailedDto;
+import kr.megaptera.makaogift.dtos.LoginErrorDto;
 import kr.megaptera.makaogift.dtos.LoginRequestDto;
 import kr.megaptera.makaogift.dtos.LoginResultDto;
 import kr.megaptera.makaogift.exceptions.LoginFailed;
@@ -8,6 +8,8 @@ import kr.megaptera.makaogift.models.Account;
 import kr.megaptera.makaogift.services.LoginService;
 import kr.megaptera.makaogift.utils.JwtUtil;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,8 +31,17 @@ public class SessionController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public LoginResultDto login(
-      @RequestBody LoginRequestDto loginRequestDto
+      @Validated @RequestBody LoginRequestDto loginRequestDto,
+      BindingResult bindingResult
   ) {
+    if (bindingResult.hasErrors()) {
+      String errorMessage = bindingResult.getAllErrors().stream()
+          .map(error -> error.getDefaultMessage())
+          .toList()
+          .get(0);
+      throw new LoginFailed(errorMessage);
+    }
+
     Account account = loginService.login(
         loginRequestDto.getIdentification(), loginRequestDto.getPassword());
 
@@ -41,7 +52,7 @@ public class SessionController {
 
   @ExceptionHandler(LoginFailed.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public LoginFailedDto loginFailed(LoginFailed exception) {
-    return new LoginFailedDto(exception.getMessage());
+  public LoginErrorDto loginFailed(LoginFailed exception) {
+    return new LoginErrorDto(exception.getMessage());
   }
 }
