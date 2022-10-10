@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 // TODO 2: 상품의 maker, name을 직접 가져오는 지금의 구조에 변경을 가해서
 //  상품의 Id만을 가지고 있게 하고, service에서는 transaction과 product를 묶어서 반환하게 한 뒤
@@ -133,6 +134,7 @@ public class Transaction {
   public boolean equals(Object other) {
     return other != null
         && other.getClass() == Transaction.class
+        && Objects.equals(this.id, ((Transaction) other).id)
         && this.sender.equals(((Transaction) other).sender)
         && this.maker.equals(((Transaction) other).maker)
         && this.name.equals(((Transaction) other).name)

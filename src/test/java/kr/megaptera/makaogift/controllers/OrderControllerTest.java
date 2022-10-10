@@ -56,7 +56,8 @@ class OrderControllerTest {
     given(orderService.orderDetail(any(Long.class)))
         .willReturn(transaction);
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/orders/1"))
+    mockMvc.perform(MockMvcRequestBuilders.get("/orders/1")
+            .header("Authorization", "Bearer " + token))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().string(
             containsString("AOE2: Definitive Edition")
