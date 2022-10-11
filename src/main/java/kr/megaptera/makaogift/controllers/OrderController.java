@@ -27,15 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-// TODO: 모든 컨트롤러, 서비스에 대해 예외처리 테스트 코드와
-//  예외처리 로직을 작성해줄 수 있도록 하자.
-
 @RestController
 public class OrderController {
   private static final Integer BLANK_RECEIVER = 3000;
   private static final Integer BLANK_ADDRESS = 3001;
   private static final Integer INVALID_RECEIVER = 3002;
-  private static final Integer DEFAULT_ERROR = 3003;
+  private static final Integer INSUFFICIENT_AMOUNT = 3003;
+  private static final Integer DEFAULT_ERROR = 3004;
 
   private final OrderService orderService;
 
@@ -119,6 +117,7 @@ public class OrderController {
       case "성함을 입력해주세요" -> BLANK_RECEIVER;
       case "주소를 입력해주세요" -> BLANK_ADDRESS;
       case "3-7자까지 한글만 사용 가능합니다" -> INVALID_RECEIVER;
+      case "잔액이 부족하여 선물하기가 불가합니다" -> INSUFFICIENT_AMOUNT;
       default -> DEFAULT_ERROR;
     };
   }

@@ -66,6 +66,10 @@ public class Account {
     return passwordEncoder.matches(password, encodedPassword);
   }
 
+  public void reduceAmount(Long purchaseCost) {
+    amount -= purchaseCost;
+  }
+
   @Override
   public String toString() {
     return "Account(" +

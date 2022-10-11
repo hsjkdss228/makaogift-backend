@@ -3,6 +3,7 @@ package kr.megaptera.makaogift.controllers;
 import kr.megaptera.makaogift.exceptions.RegistrationFailed;
 import kr.megaptera.makaogift.models.Account;
 import kr.megaptera.makaogift.services.UserService;
+import kr.megaptera.makaogift.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,17 @@ class UserControllerTest {
   private UserService userService;
 
   @SpyBean
+  private JwtUtil jwtUtil;
+
+  @SpyBean
   private PasswordEncoder passwordEncoder;
 
   private String name;
   private String identification;
   private String password;
   private Account account;
+
+  private String token;
 
   @BeforeEach
   void setUp() {
@@ -44,9 +50,11 @@ class UserControllerTest {
     password = "Seedwhale!1";
     account = new Account(1L, name, identification, 100L);
     account.changePassword(password, passwordEncoder);
+
+    token = jwtUtil.encode(identification);
   }
 
-  void mockMvcPerformAndExpectWhenOk(
+  void mockMvcPerformAndExpectWhenCreated(
       String name, String identification,
       String password, String confirmPassword,
       String expectedString) throws Exception {
@@ -59,7 +67,7 @@ class UserControllerTest {
                 "\"password\":\"" + password + "\"," +
                 "\"confirmPassword\":\"" + confirmPassword + "\"" +
                 "}"))
-        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.content().string(
             containsString(expectedString)
         ));
@@ -85,12 +93,27 @@ class UserControllerTest {
   }
 
   @Test
+  void amount() throws Exception {
+    given(userService.amount(identification))
+        .willReturn(1000000L);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/user/amount")
+            .header("Authorization", "Bearer " + token))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().string(
+            containsString("1000000")
+        ));
+
+    verify(userService).amount(identification);
+  }
+
+  @Test
   void register() throws Exception {
     given(userService.createAccount(
         name, identification, password, password))
         .willReturn(account);
 
-    mockMvcPerformAndExpectWhenOk(
+    mockMvcPerformAndExpectWhenCreated(
         name, identification, password, password, "name");
 
     verify(userService).createAccount(name, identification, password, password);

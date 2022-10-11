@@ -3,6 +3,7 @@ package kr.megaptera.makaogift.controllers;
 import kr.megaptera.makaogift.dtos.RegistrationErrorDto;
 import kr.megaptera.makaogift.dtos.RegistrationRequestDto;
 import kr.megaptera.makaogift.dtos.RegistrationResultDto;
+import kr.megaptera.makaogift.dtos.UserAmountDto;
 import kr.megaptera.makaogift.exceptions.RegistrationFailed;
 import kr.megaptera.makaogift.models.Account;
 import kr.megaptera.makaogift.services.UserService;
@@ -11,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -41,7 +44,17 @@ public class UserController {
     this.userService = userService;
   }
 
+  @GetMapping("amount")
+  public UserAmountDto amount(
+      @RequestAttribute("identification") String identification
+  ) {
+    Long amount = userService.amount(identification);
+
+    return new UserAmountDto(amount);
+  }
+
   @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
   public RegistrationResultDto register(
       @Validated(value = {ValidationSequence.class})
       @RequestBody RegistrationRequestDto registrationRequestDto,

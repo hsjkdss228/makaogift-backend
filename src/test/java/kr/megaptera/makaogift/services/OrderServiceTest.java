@@ -1,5 +1,6 @@
 package kr.megaptera.makaogift.services;
 
+import kr.megaptera.makaogift.exceptions.OrderFailed;
 import kr.megaptera.makaogift.models.Account;
 import kr.megaptera.makaogift.models.Product;
 import kr.megaptera.makaogift.models.Transaction;
@@ -18,10 +19,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 class OrderServiceTest {
@@ -96,40 +99,68 @@ class OrderServiceTest {
     Long accountId = 5L;
     String userName = "Inwoo";
     String identification = "hsjkdss228";
-    Account account = new Account(accountId, userName, identification, 50000L);
+    Long userAmount = 1000000L;
+    Account account
+        = spy(new Account(accountId, userName, identification, userAmount));
+
     given(accountRepository.findByIdentification(identification))
         .willReturn(Optional.of(account));
 
     Long productId = 3L;
     String productMaker = "Polo";
     String productName = "Polo shirt";
+    Long productPrice = 100000L;
     Product product = new Product(
-        productId, productMaker, productName, 100000L,
+        productId, productMaker, productName, productPrice,
         "Well made shirt");
+
     given(productRepository.findById(any(Long.class)))
         .willReturn(Optional.of(product));
 
     Long transactionId = 1L;
     String sender = userName;
     Integer purchaseCount = 3;
-    Long purchaseCost = 300000L;
-    String receiver = "Teacher";
+    Long purchaseCost = productPrice * purchaseCount;
+    String receiver = "Park Ki Hyeon";
     String address = "Sejong Metropolitan";
-    String messageToSend = "How are you?";
+    String messageToSend = "The Greatest Mathematics Teacher";
     Transaction transaction = new Transaction(
         transactionId, sender, productMaker, productName, purchaseCount, purchaseCost,
         receiver, address, messageToSend,
         LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0));
+
     given(orderRepository.save(any(Transaction.class)))
         .willReturn(transaction);
 
-    Transaction createdTransaction = orderService.createOrder(
-        identification, productId, purchaseCount, purchaseCost, receiver, address, messageToSend);
+    Transaction createdTransaction
+        = orderService.createOrder(
+        identification, productId, purchaseCount, purchaseCost,
+        receiver, address, messageToSend);
 
     assertThat(createdTransaction).isNotNull();
     assertThat(createdTransaction.id()).isEqualTo(1L);
 
+    verify(accountRepository).findByIdentification(identification);
     verify(productRepository).findById(3L);
+    verify(account).reduceAmount(purchaseCost);
     verify(orderRepository).save(any(Transaction.class));
+  }
+
+  @Test
+  void createOrderWithAccountWithInsufficientAmount() {Long accountId = 5L;
+    String userName = "Inwoo";
+    String identification = "hsjkdss228";
+    Long userAmount = 1000000L;
+    Account account
+        = spy(new Account(accountId, userName, identification, userAmount));
+
+    given(accountRepository.findByIdentification(identification))
+        .willReturn(Optional.of(account));
+
+    assertThrows(OrderFailed.class, () -> {
+      orderService.createOrder(
+          identification, 1L, 1, 90000000L,
+          "Anonymous receiver", "Anonymous address", "Anonymous message");
+    });
   }
 }

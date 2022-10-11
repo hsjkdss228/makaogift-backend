@@ -47,6 +47,18 @@ class UserServiceTest {
   }
 
   @Test
+  void amount() {
+    given(accountRepository.findByIdentification(identification))
+        .willReturn(Optional.of(accountAfterSaved));
+
+    Long amount = userService.amount(identification);
+
+    assertThat(amount).isEqualTo(10000000L);
+
+    verify(accountRepository).findByIdentification(identification);
+  }
+
+  @Test
   void createAccount() {
     given(accountRepository.save(accountBeforeSaved))
         .willReturn(accountAfterSaved);

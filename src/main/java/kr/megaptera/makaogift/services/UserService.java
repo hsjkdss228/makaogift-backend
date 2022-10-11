@@ -1,5 +1,6 @@
 package kr.megaptera.makaogift.services;
 
+import kr.megaptera.makaogift.exceptions.AccountNotFound;
 import kr.megaptera.makaogift.exceptions.RegistrationFailed;
 import kr.megaptera.makaogift.models.Account;
 import kr.megaptera.makaogift.repositories.AccountRepository;
@@ -17,6 +18,13 @@ public class UserService {
                      PasswordEncoder passwordEncoder) {
     this.accountRepository = accountRepository;
     this.passwordEncoder = passwordEncoder;
+  }
+
+  public Long amount(String identification) {
+    Account account = accountRepository.findByIdentification(identification)
+        .orElseThrow(AccountNotFound::new);
+
+    return account.amount();
   }
 
   public Account createAccount(String name, String identification,

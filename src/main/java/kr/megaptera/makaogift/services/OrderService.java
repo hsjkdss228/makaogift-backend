@@ -1,6 +1,7 @@
 package kr.megaptera.makaogift.services;
 
 import kr.megaptera.makaogift.exceptions.AccountNotFound;
+import kr.megaptera.makaogift.exceptions.OrderFailed;
 import kr.megaptera.makaogift.exceptions.ProductNotFound;
 import kr.megaptera.makaogift.exceptions.TransactionNotFound;
 import kr.megaptera.makaogift.models.Account;
@@ -48,12 +49,18 @@ public class OrderService {
 
   public Transaction createOrder(String identification,
                                  Long productId, Integer purchaseCount, Long purchaseCost,
-                                 String recipient, String address, String messageToSend) {
+                                 String receiver, String address, String messageToSend) {
     Account account = accountRepository.findByIdentification(identification)
         .orElseThrow(AccountNotFound::new);
 
+    if (account.amount() < purchaseCost) {
+      throw new OrderFailed("잔액이 부족하여 선물하기가 불가합니다");
+    }
+
     Product found = productRepository.findById(productId)
         .orElseThrow(ProductNotFound::new);
+
+    account.reduceAmount(purchaseCost);
 
     String sender = account.name();
     String maker = found.maker();
@@ -61,7 +68,7 @@ public class OrderService {
 
     Transaction transaction = new Transaction(
         sender, maker, name, purchaseCount, purchaseCost,
-        recipient, address, messageToSend);
+        receiver, address, messageToSend);
 
     return orderRepository.save(transaction);
   }

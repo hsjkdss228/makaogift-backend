@@ -1,5 +1,6 @@
 package kr.megaptera.makaogift.controllers;
 
+import kr.megaptera.makaogift.exceptions.OrderFailed;
 import kr.megaptera.makaogift.models.Transaction;
 import kr.megaptera.makaogift.services.OrderService;
 import kr.megaptera.makaogift.utils.JwtUtil;
@@ -216,6 +217,31 @@ class OrderControllerTest {
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(MockMvcResultMatchers.content().string(
             containsString("3002")
+        ));
+  }
+
+  @Test
+  void orderWithAccountWithInsufficientAmount() throws Exception {
+    given(orderService.createOrder(
+        any(String.class), any(Long.class), any(Integer.class), any(Long.class),
+        any(String.class), any(String.class), any(String.class)))
+        .willThrow(new OrderFailed("잔액이 부족하여 선물하기가 불가합니다"));
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/order")
+            .header("Authorization", "Bearer " + token)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"productId\":\"1\"," +
+                "\"purchaseCount\":\"3\"," +
+                "\"purchaseCost\":\"40000\"," +
+                "\"receiver\":\"황인우\"," +
+                "\"address\":\"chungchungnamdo\"," +
+                "\"messageToSend\":\"good\"" +
+                "}"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.content().string(
+            containsString("3003")
         ));
   }
 }

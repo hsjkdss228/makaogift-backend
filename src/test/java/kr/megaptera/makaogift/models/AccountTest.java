@@ -18,4 +18,11 @@ class AccountTest {
     assertThat(account.authenticate(password, passwordEncoder)).isTrue();
     assertThat(account.authenticate("wrongPassword", passwordEncoder)).isFalse();
   }
+
+  @Test
+  void reduceAmount() {
+    Account account = new Account("hsjkdss228", "황인우", 1000000L);
+    account.reduceAmount(999999L);
+    assertThat(account.amount()).isEqualTo(1L);
+  }
 }
