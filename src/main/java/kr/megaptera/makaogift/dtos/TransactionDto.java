@@ -11,7 +11,7 @@ public class TransactionDto {
 
   private final Long purchaseCost;
 
-  private final String recipient;
+  private final String receiver;
 
   private final String address;
 
@@ -19,19 +19,22 @@ public class TransactionDto {
 
   private final String createdAt;
 
+  private final String imageUrl;
+
   public TransactionDto(Long id, String maker, String name,
                         Integer purchaseCount, Long purchaseCost,
-                        String recipient, String address, String messageToSend,
-                        String createdAt) {
+                        String receiver, String address, String messageToSend,
+                        String createdAt, String imageUrl) {
     this.id = id;
     this.maker = maker;
     this.name = name;
     this.purchaseCount = purchaseCount;
     this.purchaseCost = purchaseCost;
-    this.recipient = recipient;
+    this.receiver = receiver;
     this.address = address;
     this.messageToSend = messageToSend;
     this.createdAt = createdAt;
+    this.imageUrl = imageUrl;
   }
 
   public Long getId() {
@@ -54,8 +57,8 @@ public class TransactionDto {
     return purchaseCost;
   }
 
-  public String getRecipient() {
-    return recipient;
+  public String getReceiver() {
+    return receiver;
   }
 
   public String getAddress() {
@@ -68,5 +71,9 @@ public class TransactionDto {
 
   public String getCreatedAt() {
     return createdAt;
+  }
+
+  public String getImageUrl() {
+    return imageUrl;
   }
 }

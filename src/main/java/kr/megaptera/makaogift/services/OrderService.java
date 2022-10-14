@@ -65,10 +65,11 @@ public class OrderService {
     String sender = account.name();
     String maker = found.maker();
     String name = found.name();
+    String imageUrl = found.imageUrl();
 
     Transaction transaction = new Transaction(
         sender, maker, name, purchaseCount, purchaseCost,
-        receiver, address, messageToSend);
+        receiver, address, messageToSend, imageUrl);
 
     return orderRepository.save(transaction);
   }

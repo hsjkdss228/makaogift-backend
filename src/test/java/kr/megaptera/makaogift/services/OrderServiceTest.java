@@ -47,7 +47,7 @@ class OrderServiceTest {
     Transaction transaction = new Transaction(
         1L, "강재형", "Wilson", "글러브", 1, 350000L,
         "이동훈", "올림픽공원 선수촌아파트", "보급반 1티어 이동훈!!!",
-        LocalDateTime.of(2022, 10, 8, 10, 43, 0, 0));
+        LocalDateTime.of(2022, 10, 8, 10, 43, 0, 0), "Image Url");
     given(orderRepository.findById(any()))
         .willReturn(Optional.of(transaction));
 
@@ -68,13 +68,13 @@ class OrderServiceTest {
 
     List<Transaction> transactions = List.of(
         new Transaction(1L, userName, "star", "축구공", 3, 45000L,
-            "축구꿈나무", "동네축구단", "축구 꿈나무들에게 희망을"),
+            "축구부", "초등학교", "축구 열심히 해라", "Image Url"),
         new Transaction(2L, userName, "Skyline", "야구공", 10, 30000L,
-            "야구꿈나무", "동네야구단", "야구 꿈나무들에게 희망을"),
+            "야구부", "고등학교", "야구 열심히 해라", "Image Url"),
         new Transaction(3L, userName, "star", "배구공", 2, 60000L,
-            "배구하는친구들", "동네배구장", "배구 꿈나무들에게 희망을"),
+            "배구부", "중학교", "배구 열심히 해라", "Image Url"),
         new Transaction(4L, userName, "star", "농구공", 3, 54000L,
-            "농구꿈나무", "동네농구장", "농구 꿈나무들에게 희망을"));
+            "농구부", "중학교", "농구 한판 고?", "Image Url"));
     int page = 1;
     int pageSize = 2;
     Pageable pageable = PageRequest.of(page - 1, pageSize);
@@ -110,15 +110,18 @@ class OrderServiceTest {
     String productMaker = "Polo";
     String productName = "Polo shirt";
     Long productPrice = 100000L;
+    String imageUrl = "image URL";
     Product product = new Product(
         productId, productMaker, productName, productPrice,
-        "Well made shirt");
+        "Well made shirt",
+        imageUrl);
 
     given(productRepository.findById(any(Long.class)))
         .willReturn(Optional.of(product));
 
     Long transactionId = 1L;
     String sender = userName;
+    String transactionImageUrl = imageUrl;
     Integer purchaseCount = 3;
     Long purchaseCost = productPrice * purchaseCount;
     String receiver = "Park Ki Hyeon";
@@ -127,7 +130,8 @@ class OrderServiceTest {
     Transaction transaction = new Transaction(
         transactionId, sender, productMaker, productName, purchaseCount, purchaseCost,
         receiver, address, messageToSend,
-        LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0));
+        LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0),
+        transactionImageUrl);
 
     given(orderRepository.save(any(Transaction.class)))
         .willReturn(transaction);

@@ -41,13 +41,16 @@ public class Transaction {
   @CreationTimestamp
   private LocalDateTime createdAt;
 
+  private String imageUrl;
+
   public Transaction() {
 
   }
 
   public Transaction(String sender, String maker, String name,
                      Integer purchaseCount, Long purchaseCost,
-                     String receiver, String address, String messageToSend) {
+                     String receiver, String address, String messageToSend,
+                     String imageUrl) {
     this.sender = sender;
     this.maker = maker;
     this.name = name;
@@ -56,11 +59,13 @@ public class Transaction {
     this.receiver = receiver;
     this.address = address;
     this.messageToSend = messageToSend;
+    this.imageUrl = imageUrl;
   }
 
   public Transaction(Long id, String sender, String maker, String name,
                      Integer purchaseCount, Long purchaseCost,
-                     String receiver, String address, String messageToSend) {
+                     String receiver, String address, String messageToSend,
+                     String imageUrl) {
     this.id = id;
     this.sender = sender;
     this.maker = maker;
@@ -70,12 +75,13 @@ public class Transaction {
     this.receiver = receiver;
     this.address = address;
     this.messageToSend = messageToSend;
+    this.imageUrl = imageUrl;
   }
 
   public Transaction(String sender, String maker, String name,
                      Integer purchaseCount, Long purchaseCost,
                      String receiver, String address, String messageToSend,
-                     LocalDateTime createdAt) {
+                     LocalDateTime createdAt, String imageUrl) {
     this.sender = sender;
     this.maker = maker;
     this.name = name;
@@ -85,12 +91,13 @@ public class Transaction {
     this.address = address;
     this.messageToSend = messageToSend;
     this.createdAt = createdAt;
+    this.imageUrl = imageUrl;
   }
 
   public Transaction(Long id, String sender, String maker, String name,
                      Integer purchaseCount, Long purchaseCost,
                      String receiver, String address, String messageToSend,
-                     LocalDateTime createdAt) {
+                     LocalDateTime createdAt, String imageUrl) {
     this.id = id;
     this.sender = sender;
     this.maker = maker;
@@ -101,6 +108,7 @@ public class Transaction {
     this.address = address;
     this.messageToSend = messageToSend;
     this.createdAt = createdAt;
+    this.imageUrl = imageUrl;
   }
 
   public Long id() {
@@ -119,7 +127,8 @@ public class Transaction {
     return new TransactionDto(
         id, maker, name, purchaseCount, purchaseCost,
         receiver, address, messageToSend,
-        createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+        imageUrl
     );
   }
 
@@ -127,7 +136,8 @@ public class Transaction {
   public String toString() {
     return "Order: " + id + ", " + maker + ", " + name + ", " +
         purchaseCount + ", " + purchaseCost + ", " +
-        receiver + ", " + address + ", " + messageToSend;
+        receiver + ", " + address + ", " + messageToSend
+        + ", " + imageUrl;
   }
 
   @Override
@@ -143,6 +153,7 @@ public class Transaction {
         && this.receiver.equals(((Transaction) other).receiver)
         && this.address.equals(((Transaction) other).address)
         && this.messageToSend.equals(((Transaction) other).messageToSend)
-        && this.createdAt.equals(((Transaction) other).createdAt);
+        && this.createdAt.equals(((Transaction) other).createdAt)
+        && this.imageUrl.equals(((Transaction) other).imageUrl);
   }
 }

@@ -17,6 +17,20 @@ public class BackdoorControllerTest {
   private MockMvc mockMvc;
 
   @Test
+  void deleteAccountForTest() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get("/backdoor/delete-account-for-test" +
+        "?identification=raboot3368"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  void deleteTransactionAccountForTest() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get("/backdoor/delete-transaction-for-test" +
+            "?messageToSend=messagefortest"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
   void resetProducts() throws Exception {
     mockMvc.perform(MockMvcRequestBuilders.get("/backdoor/reset-products"))
         .andExpect(MockMvcResultMatchers.status().isOk());

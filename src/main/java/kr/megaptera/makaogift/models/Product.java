@@ -20,16 +20,20 @@ public class Product {
 
   private String description;
 
+  private String imageUrl;
+
   public Product() {
 
   }
 
-  public Product(Long id, String maker, String name, Long price, String description) {
+  public Product(Long id, String maker, String name, Long price,
+                 String description, String imageUrl) {
     this.id = id;
     this.maker = maker;
     this.name = name;
     this.price = price;
     this.description = description;
+    this.imageUrl = imageUrl;
   }
 
   public String maker() {
@@ -40,13 +44,18 @@ public class Product {
     return name;
   }
 
+  public String imageUrl() {
+    return imageUrl;
+  }
+
   public ProductDto toDto() {
     return new ProductDto(
         id,
         maker,
         name,
         price,
-        description
+        description,
+        imageUrl
     );
   }
 }

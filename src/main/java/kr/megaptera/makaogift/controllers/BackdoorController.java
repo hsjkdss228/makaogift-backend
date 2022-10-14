@@ -19,6 +19,28 @@ public class BackdoorController {
     this.jdbcTemplate = jdbcTemplate;
   }
 
+  @GetMapping("/delete-account-for-test")
+  public String deleteAccountForTest(
+      @RequestParam String identification
+  ) {
+    jdbcTemplate.update("" +
+        "delete from ACCOUNT where IDENTIFICATION = '" + identification + "'"
+    );
+
+    return "Backdoor 테스트용 계정 삭제가 완료되었습니다.";
+  }
+
+  @GetMapping("/delete-transaction-for-test")
+  public String deleteTransactionForTest(
+      @RequestParam String messageToSend
+  ) {
+    jdbcTemplate.update("" +
+        "delete from TRANSACTION where MESSAGE_TO_SEND = '" + messageToSend + "'"
+    );
+
+    return "Backdoor 테스트용 계정 삭제가 완료되었습니다.";
+  }
+
   @GetMapping("/reset-products")
   public String resetProducts() {
     resetProductsDatabase();
@@ -37,10 +59,10 @@ public class BackdoorController {
     resetProductsDatabase();
 
     jdbcTemplate.update("" +
-                        "insert into PRODUCT(" +
-                                "ID, MAKER, NAME, PRICE, DESCRIPTION) " +
-                        "values(?, ?, ?, ?, ?)",
-                        id, maker, name, price, description);
+            "insert into PRODUCT(" +
+            "ID, MAKER, NAME, PRICE, DESCRIPTION) " +
+            "values(?, ?, ?, ?, ?)",
+        id, maker, name, price, description);
 
     return "Backdoor 단일 상품 세팅이 완료되었습니다.";
   }
@@ -53,9 +75,9 @@ public class BackdoorController {
 
     for (long i = 1; i <= count; i += 1) {
       jdbcTemplate.update("" +
-                          "insert into PRODUCT(" +
-                                  "ID, MAKER, NAME, PRICE, DESCRIPTION) " +
-                          "values(?, ?, ?, ?, ?)",
+              "insert into PRODUCT(" +
+              "ID, MAKER, NAME, PRICE, DESCRIPTION) " +
+              "values(?, ?, ?, ?, ?)",
           i, "제조사 " + i, "상품 옵션명 " + i, i * 100, "상품 설명 " + i);
     }
 
@@ -73,12 +95,12 @@ public class BackdoorController {
 
     for (long i = 1; i <= count; i += 1) {
       jdbcTemplate.update("" +
-                          "insert into TRANSACTION(" +
-                          "ID, SENDER, MAKER, NAME, PURCHASE_COUNT, PURCHASE_COST, " +
-                          "RECEIVER, ADDRESS, MESSAGE_TO_SEND, " +
-                          "CREATED_AT) " +
-                          "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          i, "보내는 사람" + i , "제조사 " + i, "상품 옵션명 " + i, i, i * (i * 100),
+              "insert into TRANSACTION(" +
+              "ID, SENDER, MAKER, NAME, PURCHASE_COUNT, PURCHASE_COST, " +
+              "RECEIVER, ADDRESS, MESSAGE_TO_SEND, " +
+              "CREATED_AT) " +
+              "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          i, "보내는 사람" + i, "제조사 " + i, "상품 옵션명 " + i, i, i * (i * 100),
           "받는 사람 " + i, "주소 " + i, "보낼 메세지 " + i,
           LocalDateTime.now());
     }

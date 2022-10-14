@@ -37,7 +37,8 @@ class ProductControllerTest {
         "Chris Sawyer",
         "RollerCoaster Tycoon 2",
         5000L,
-        "놀이공원 건설 경영 시뮬레이션 게임을 가장한 대혼돈의 실험실"
+        "놀이공원 건설 경영 시뮬레이션 게임을 가장한 대혼돈의 실험실",
+        null
     );
     given(productService.product(any())).willReturn(product);
 
@@ -51,9 +52,9 @@ class ProductControllerTest {
   @Test
   void products() throws Exception {
     List<Product> products = List.of(
-        new Product(1L, "제조사명 1", "Very Good Product", 100L, "상품 설명 1"),
-        new Product(2L, "제조사명 2", "Gorgeous Product", 100L, "상품 설명 2"),
-        new Product(3L, "제조사명 3", "Extraordinary Product", 100L, "상품 설명 3")
+        new Product(1L, "제조사명 1", "Very Good Product", 100L, "상품 설명 1", null),
+        new Product(2L, "제조사명 2", "Gorgeous Product", 100L, "상품 설명 2", null),
+        new Product(3L, "제조사명 3", "Extraordinary Product", 100L, "상품 설명 3", null)
     );
     int page = 1;
     Pageable pageable = PageRequest.of(page - 1, 2);

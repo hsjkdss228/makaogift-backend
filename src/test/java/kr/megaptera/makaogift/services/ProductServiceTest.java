@@ -35,7 +35,8 @@ class ProductServiceTest {
         "제조사명",
         "Very Good Product",
         10000L,
-        "이 상품은 이러이러합니다"
+        "이 상품은 이러이러합니다",
+        "Product Image Url"
     );
     given(productRepository.findById(any()))
         .willReturn(Optional.of(product));
@@ -49,12 +50,12 @@ class ProductServiceTest {
   @Test
   void findByPage() {
     List<Product> products = List.of(
-        new Product(1L, "제조사명 1", "Bad Product", 100L, "상품 설명 1"),
-        new Product(2L, "제조사명 2", "Disappointing Product", 200L, "상품 설명 2"),
-        new Product(3L, "제조사명 3", "Disgusting Product", 300L, "상품 설명 3"),
-        new Product(4L, "제조사명 4", "Bad Product", 400L, "상품 설명 4"),
-        new Product(5L, "제조사명 5", "Disappointing Product", 500L, "상품 설명 5"),
-        new Product(6L, "제조사명 6", "Disgusting Product", 600L, "상품 설명 6")
+        new Product(1L, "제조사명 1", "Bad Product", 100L, "상품 설명 1", "Image Url"),
+        new Product(2L, "제조사명 2", "Disappointing Product", 200L, "상품 설명 2", "Image Url"),
+        new Product(3L, "제조사명 3", "Disgusting Product", 300L, "상품 설명 3", "Image Url"),
+        new Product(4L, "제조사명 4", "Terrible Product", 400L, "상품 설명 4", "Image Url"),
+        new Product(5L, "제조사명 5", "Awful Product", 500L, "상품 설명 5", "Image Url"),
+        new Product(6L, "제조사명 6", "Horrendous Product", 600L, "상품 설명 6", "Image Url")
     );
     int page = 2;
     int pageSize = 3;

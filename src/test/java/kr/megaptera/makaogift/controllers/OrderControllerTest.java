@@ -53,7 +53,7 @@ class OrderControllerTest {
     Transaction transaction = new Transaction(
         1L, "황인우", "Forgotten Empires", "AOE2: Definitive Edition", 3, 40000L,
         "김종진", "순천", "게임은 역시 고전이죠",
-        LocalDateTime.of(2022, 10, 8, 10, 43, 0, 0));
+        LocalDateTime.of(2022, 10, 8, 10, 43, 0, 0), "Image Url");
     given(orderService.orderDetail(any(Long.class)))
         .willReturn(transaction);
 
@@ -62,6 +62,9 @@ class OrderControllerTest {
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().string(
             containsString("AOE2: Definitive Edition")
+        ))
+        .andExpect(MockMvcResultMatchers.content().string(
+            containsString("Image Url")
         ));
   }
 
@@ -70,16 +73,16 @@ class OrderControllerTest {
     List<Transaction> transactions = List.of(
         new Transaction(1L, "황인우", "Emart 24", "랜더스 수제맥주", 5, 15000L,
             "박수민", "인천 동구", "형님 잘 계십니까?",
-            LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0)),
+            LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0), "Image Url"),
         new Transaction(2L, "황인우", "Insight", "TDD", 1, 22000L,
             "김인우", "충청남도", "인우야 책읽자",
-            LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0)),
+            LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0), "Image Url"),
         new Transaction(3L, "황인우", "Starbucks", "돌체 연유라떼", 4, 24000L,
             "김커피", "커피나라", "커피애호가에게 보내는 최고의 선물",
-            LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0)),
+            LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0), "Image Url"),
         new Transaction(4L, "황인우", "Samsung Electronics", "주식", 10, 700000L,
             "불쌍한사람", "10층", "좀만 견디십쇼",
-            LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0))
+            LocalDateTime.of(2022, 10, 7, 11, 3, 14, 0), "Image Url")
     );
     int page = 1;
     int pageSize = 3;
@@ -111,7 +114,7 @@ class OrderControllerTest {
   void order() throws Exception {
     Transaction transaction = new Transaction(
         1L, "sender 1", "maker 1", "product name 1", 5, 50000L,
-        "recipient 1", "address 1", "message to send 1");
+        "recipient 1", "address 1", "message to send 1", "Image Url");
     given(orderService.createOrder(
         any(String.class), any(Long.class), any(Integer.class), any(Long.class),
         any(String.class), any(String.class), any(String.class)))
